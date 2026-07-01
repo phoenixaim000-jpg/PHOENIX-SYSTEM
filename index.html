@@ -212,3 +212,489 @@
 
 </body>
 </html>
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CACAO屋RECORD × AIM PHOENIX 総合グランドプラットフォーム</title>
+    <style>
+        :root {
+            --bg-deep: #0a0b10;
+            --bg-card: #131520;
+            --bg-card-hover: #1c1f30;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --accent-cyan: #00f0ff;
+            --accent-green: #00ff87;
+            --accent-gold: #ffb800;
+            --accent-pink: #ff2a85;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ユニバーサルアクセシビリティ・大きな文字と十分な余白 */
+        header {
+            background: linear-gradient(180deg, #131520 0%, #0a0b10 100%);
+            padding: 60px 20px 40px;
+            text-align: center;
+            border-bottom: 4px solid var(--accent-cyan);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin: 0;
+            letter-spacing: 2px;
+            color: #fff;
+            text-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
+        }
+
+        .header-desc {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            margin-top: 15px;
+            font-weight: 500;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* 特大で押しやすいナビゲーションボタン */
+        .main-nav {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            margin-bottom: 50px;
+        }
+
+        .nav-btn {
+            background-color: var(--bg-card);
+            border: 2px solid #2d3142;
+            color: #fff;
+            padding: 22px 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 16px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 240, 255, 0.2);
+            background-color: var(--bg-card-hover);
+        }
+
+        .nav-btn.active {
+            border-color: var(--accent-cyan);
+            background: linear-gradient(135deg, #131520 0%, #1a304a 100%);
+            color: var(--accent-cyan);
+        }
+
+        /* コンテンツセクション */
+        .section-panel {
+            background-color: var(--bg-card);
+            border-radius: 24px;
+            padding: 40px;
+            margin-bottom: 40px;
+            border: 1px solid #23263a;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        h2 {
+            font-size: 2rem;
+            margin-top: 0;
+            margin-bottom: 30px;
+            padding-left: 15px;
+            border-left: 6px solid var(--accent-cyan);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 { grid-template-columns: 1fr; }
+            h1 { font-size: 1.8rem; }
+            .section-panel { padding: 20px; }
+        }
+
+        /* トレーディングビューWidget枠 */
+        .chart-wrapper {
+            background-color: #000;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 2px solid #23263a;
+            height: 450px;
+            position: relative;
+        }
+
+        /* 特大アクションボタン（誰でも絶対に押し間違えない設計） */
+        .action-btn {
+            display: block;
+            width: 100%;
+            padding: 24px 30px;
+            margin-top: 20px;
+            background-color: var(--accent-green);
+            color: #022c16;
+            text-align: center;
+            text-decoration: none;
+            font-weight: 800;
+            font-size: 1.4rem;
+            border-radius: 50px;
+            box-shadow: 0 6px 20px rgba(0, 255, 135, 0.3);
+            transition: all 0.2s ease;
+            border: none;
+            cursor: pointer;
+            box-sizing: border-box;
+        }
+
+        .action-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 30px rgba(0, 255, 135, 0.5);
+            background-color: #00ffaa;
+        }
+
+        .action-btn-pink {
+            background-color: var(--accent-pink);
+            color: #fff;
+            box-shadow: 0 6px 20px rgba(255, 42, 133, 0.3);
+        }
+        .action-btn-pink:hover {
+            background-color: #ff4fa1;
+            box-shadow: 0 10px 30px rgba(255, 42, 133, 0.5);
+        }
+
+        /* 投資カードスタイル */
+        .investment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .invest-card {
+            background-color: #191c2b;
+            border: 1px solid #2d3142;
+            border-radius: 16px;
+            padding: 25px;
+            transition: all 0.2s;
+        }
+
+        .invest-card:hover {
+            border-color: var(--accent-gold);
+            background-color: var(--bg-card-hover);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        /* 歴史タイムライン */
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+            border-left: 2px solid #2d3142;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -37px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50px;
+            background-color: var(--accent-gold);
+            border: 4px solid var(--bg-card);
+        }
+
+        /* メディアプレースホルダー */
+        .media-placeholder {
+            background: linear-gradient(45deg, #1f2335 0%, #131520 100%);
+            border: 2px dashed #3b4261;
+            border-radius: 16px;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            font-weight: bold;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+            font-size: 1rem;
+            border-top: 1px solid #1f2335;
+            margin-top: 60px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>CACAO屋RECORD × AIM PHOENIX</h1>
+        <div class="header-desc">多次元型ライフサバイバル＆アセットプラットフォーム</div>
+    </header>
+
+    <div class="container">
+        
+        <div class="main-nav">
+            <button class="nav-btn active" onclick="switchTab('trading')">📈 FX＆実データ</button>
+            <button class="nav-btn" onclick="switchTab('dream-fund')">🏛️ 未来防衛・5大投資</button>
+            <button class="nav-btn" onclick="switchTab('economy-history')">📜 お金の歴史アカデミー</button>
+            <button class="nav-btn" onclick="switchTab('healthcare')">🧘 兵隊脱出ヘルスケア</button>
+            <button class="nav-btn" onclick="switchTab('streaming')">🎵 配信・メディア</button>
+            <button class="nav-btn" onclick="switchTab('ai-intelligence')">🤖 世界AI情報・開発</button>
+        </div>
+
+        <div id="trading" class="section-panel">
+            <h2>📈 PHOENIX FX リアルタイム可視化エンジン</h2>
+            <p style="color: var(--text-muted); margin-bottom: 25px;">
+                TradingViewシステムと直結。市場のボラティリティ、ローソク足の推移、およびインジケーター情報をリアルタイムで監視し、客観的なトレード検証を行うコア画面です。
+            </p>
+            <div class="grid-2">
+                <div class="chart-wrapper">
+                    <div class="tradingview-widget-container" style="height:100%;width:100%">
+                        <div id="tradingview_chart" style="height:100%;width:100%"></div>
+                        <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+                        <script type="text/javascript">
+                        new TradingView.widget({
+                            "autosize": true,
+                            "symbol": "OANDA:USDJPY",
+                            "interval": "15",
+                            "timezone": "Asia/Tokyo",
+                            "theme": "dark",
+                            "style": "1",
+                            "locale": "ja",
+                            "enable_publishing": false,
+                            "hide_side_toolbar": false,
+                            "allow_symbol_change": true,
+                            "container_id": "tradingview_chart"
+                        });
+                        </script>
+                    </div>
+                </div>
+                <div>
+                    <h3 style="color: var(--accent-cyan); font-size: 1.5rem; margin-top: 0;">現在のPHOENIX EA 演算ステータス</h3>
+                    <p>価格の急激な「飛び乗り」を防ぐための確定カウントダウンロジック、および市場の歪みを自動判定するシステムをバックエンドで統合しています。感情を排除した再現性をここで担保します。</p>
+                    
+                    <div style="background-color: #0a0b10; padding: 20px; border-radius: 12px; margin: 20px 0; border: 1px solid #23263a;">
+                        <span style="color: var(--accent-green); font-weight: bold;">● AIエージェント常時稼働中</span><br>
+                        <span style="font-size: 0.95rem; color: var(--text-muted);">期待値ベースのポジション防衛ロジックが正常にデプロイされています。</span>
+                    </div>
+
+                    <button class="action-btn" onclick="alert('PHOENIX検証ログおよびインジケーター設定ファイルを読み込みます。')">最新のトレード実証・検証結果を表示する</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="dream-fund" class="section-panel" style="display:none;">
+            <h2>🏛️ 未来防衛：多角型5大夢投資ポートフォリオ</h2>
+            <p style="color: var(--text-muted); margin-bottom: 30px;">
+                FXで獲得した現金をただプールするだけでなく、強固な現実資産、インフラ、そして魂が歓喜するカルチャーへと分散・再投資し、真の安全資産圏を確立します。
+            </p>
+            <div class="investment-grid">
+                <div class="invest-card">
+                    <span class="badge" style="background-color: rgba(0,240,255,0.1); color: var(--accent-cyan);">01. 不動産投資</span>
+                    <h3 style="margin: 0 0 10px 0;">現物ベースの地盤確立</h3>
+                    <p style="font-size: 0.95rem; color: var(--text-muted);">インフレに左右されない、毎月の強固な家賃収入（キャッシュフロー）の基盤を組み上げ、生活の絶対防衛線を敷きます。</p>
+                </div>
+                <div class="invest-card">
+                    <span class="badge" style="background-color: rgba(0,255,135,0.1); color: var(--accent-green);">02. NISA・長期積立</span>
+                    <h3 style="margin: 0 0 10px 0;">国税優遇のインデックス</h3>
+                    <p style="font-size: 0.95rem; color: var(--text-muted);">世界の経済成長に100％ただ乗りする、複利の力を最大化した超長期の税制優遇資産運用を裏で自動並行させます。</p>
+                </div>
+                <div class="invest-card">
+                    <span class="badge" style="background-color: rgba(255,184,0,0.1); color: var(--accent-gold);">03. 実物・現物投資</span>
+                    <h3 style="margin: 0 0 10px 0;">ゴールド・実物アセット</h3>
+                    <p style="font-size: 0.95rem; color: var(--text-muted);">デジタルが万が一麻痺した瞬間のために、貴金属（金）やコモディティ等、物理的価値をゼロにできない現物で富を固定します。</p>
+                </div>
+                <div class="invest-card">
+                    <span class="badge" style="background-color: #3b205a; color: #d6adff;">04. セキュリティサーバー</span>
+                    <h3 style="margin: 0 0 10px 0;">ゲーム用安全対策サーバー</h3>
+                    <p style="font-size: 0.95rem; color: var(--text-muted);">ゲームコミュニティや分散型データの安全を守るための、24時間物理サーバーインフラ。データ主権を自前で確保する投資です。</p>
+                </div>
+                <div class="invest-card">
+                    <span class="badge" style="background-color: rgba(255,42,133,0.1); color: var(--accent-pink);">05. 野外RAVEカルチャー</span>
+                    <h3 style="margin: 0 0 10px 0;">祝祭空間の創出投資</h3>
+                    <p style="font-size: 0.95rem; color: var(--text-muted);">CACAO屋RECORDが目指す究極の祝祭。音響、自然、コミュニティを繋ぎ、人々が魂を解放する『サードプレイス』へ資本を投入します。</p>
+                </div>
+            </div>
+            <button class="action-btn" style="background-color: var(--accent-gold); color: #2e2000;">各アセットへの資金分配・プール比率設計書を見る</button>
+        </div>
+
+        <div id="economy-history" class="section-panel" style="display:none;">
+            <h2>📜 マネー・エボリューション：物々交換からAI経済まで</h2>
+            <p style="color: var(--text-muted); margin-bottom: 30px;">
+                「お金とは何か」の正体を知らなければ、お金に支配され続けます。その起源から現代の自動化システムまでの本質をここで学びます。
+            </p>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <h4 style="margin: 0; font-size: 1.2rem; color: var(--accent-gold);">第1章：物々交換の限界と「価値の尺度」</h4>
+                    <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 5px;">
+                        元々は魚と野菜を直接交換していたが、タイミングや腐敗の限界が生じた。そこで、誰もが欲しがる「貝殻」や「カカオ豆（物品貨幣）」を中間に挟む知恵が誕生した。これが通貨の原型。
+                    </p>
+                </div>
+                <div class="timeline-item">
+                    <h4 style="margin: 0; font-size: 1.2rem; color: var(--accent-cyan);">第2章：金属貨幣の誕生とゴールドの絶対性</h4>
+                    <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 5px;">
+                        劣化せず、量が限られている「金（ゴールド）」や「銀」が共通の価値基準となる。王がその純度を保証するためにコイン（鋳造貨幣）を発行し、一気に商業が爆発した。
+                    </p>
+                </div>
+                <div class="timeline-item">
+                    <h4 style="margin: 0; font-size: 1.2rem; color: #fff;">第3章：紙幣（信用貨幣）へのパラダイムシフト</h4>
+                    <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 5px;">
+                        重い金を銀行に預け、代わりに受け取った「預かり証（紙切れ）」で取引するようになった。これが現在の「お札（紙幣）」の始まりであり、お金の正体が『物質』から『信用』へと切り替わった瞬間。
+                    </p>
+                </div>
+                <div class="timeline-item">
+                    <h4 style="margin: 0; font-size: 1.2rem; color: var(--accent-green);">第4章：AI・分散型台帳技術による「究極の自動化」</h4>
+                    <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 5px;">
+                        そして現代。お金は完全にデジタル上のデータとなり、中央組織すら介さない暗号資産（ブロックチェーン）や、AIM PHOENIXが提唱する「AIによる市場の歪みからの収益自動回収（EA）」へと進化を遂げた。
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div id="healthcare" class="section-panel" style="display:none;">
+            <h2>🧘 企業兵隊からの自律脱出：リタイア前後ヘルスケア</h2>
+            <p style="color: var(--text-muted); margin-bottom: 30px;">
+                どれだけお金があっても、企業という戦場で心身を壊しては意味がありません。労働者（兵隊）としての精神的脱出から、退職前後の自律神経ケアまで、心と体を完全に調律するセクション。
+            </p>
+            <div class="grid-2">
+                <div style="background: rgba(255,255,255,0.02); padding: 25px; border-radius: 16px; border: 1px solid #23263a;">
+                    <h3 style="color: var(--accent-green); margin-top:0;">🌟 精神と肉体の調律メソッド</h3>
+                    <ul style="padding-left: 20px; line-height: 2;">
+                        <li><strong>暮らしの中の占星術占い：</strong> 天体のバイオリズム（演算されたサイクル）を生活に取り入れ、無理な行動を抑制し精神の安定を図る。</li>
+                        <li><strong>深層リラクゼーション（おこう）：</strong> 嗅覚から直接脳の自律神経を鎮静化させ、日中の戦闘モードを解除。</li>
+                        <li><strong>鍼治療（ハリー・トリートメント）：</strong> 企業活動で凝り固まった筋肉と神経の詰まりを物理的に解放し、気の流れを正常化。</li>
+                    </ul>
+                </div>
+                <div style="background: rgba(255,255,255,0.02); padding: 25px; border-radius: 16px; border: 1px solid #23263a;">
+                    <h3 style="color: var(--accent-pink); margin-top:0;">🧘 マインドフルネス・ヨガ</h3>
+                    <p>呼吸と肉体のポーズを完全に一致させ、過去への後悔や未来への不安（企業のプレッシャー）から脳を切り離し、「今、この瞬間」に意識を100％集中させます。極上のサウンドと組み合わせることで、リタイア後の第二の人生を輝かせるための強固な健康資本を構築します。</p>
+                    <button class="action-btn action-btn-pink" onclick="alert('ヨガ・マインドフルネス呼吸法の解説音声/タイマーを起動します。')">瞑想用タイマー・ガイダンスを起動</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="streaming" class="section-panel" style="display:none;">
+            <h2>🎵 クリエイティブ配信＆ストリーミングゲート</h2>
+            <p style="color: var(--text-muted); margin-bottom: 30px;">
+                CACAO屋RECORDが紡ぎ出すDark Progress、Psychedelic Tranceの未発表音源や、YouTube、TikTok等へ向けた動画配信コンテンツの最前線です。
+            </p>
+            <div class="grid-2">
+                <div>
+                    <h3>🎧 CACAO屋RECORD 公式プレイリスト</h3>
+                    <div class="media-placeholder">
+                        <div>🎵 音楽ストリーミングプレイヤー（Suno AI / TuneCore連携用）</div>
+                        <span style="font-size: 0.85rem; color: var(--text-muted);">ここにSuno AI等で商用利用確定した楽曲コードを埋め込み可能</span>
+                    </div>
+                </div>
+                <div>
+                    <h3>📱 映像配信ストリーム（YouTube / TikTok）</h3>
+                    <div class="media-placeholder">
+                        <div>🎬 ビデオ・配信プラットフォーム埋め込み</div>
+                        <span style="font-size: 0.85rem; color: var(--text-muted);">天野さんの公式YouTube動画やTikTokの共有タグがここに入ります</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="ai-intelligence" class="section-panel" style="display:none;">
+            <h2>🤖 AI世界情勢テレメトリ ＆ 開発システムログ</h2>
+            <p style="color: var(--text-muted); margin-bottom: 25px;">
+                世界最高峰のAIエージェント（Aegis）がリアルタイムに世界情勢、経済指標、AI技術のパラダイムシフトを監視・学習し、プラットフォームへフィードバックする知略の拠点です。
+            </p>
+            <div style="background-color: #0a0b10; border: 1px solid #2d3142; border-radius: 16px; padding: 30px;">
+                <h3 style="color: var(--accent-cyan); margin-top: 0; display: flex; justify-content: space-between; align-items: center;">
+                    <span>🌐 グローバルAIインテリジェンス・ログ</span>
+                    <span style="font-size: 0.9rem; background: #2a2d42; color: #fff; padding: 4px 10px; border-radius: 6px;">Status: Optimal</span>
+                </h3>
+                <p style="font-family: monospace; color: #39ff14; background: #050608; padding: 15px; border-radius: 8px; line-height: 1.8;">
+                    [INFO] AI Agent "Aegis" synchronized with global economic trends.<br>
+                    [DATA] Dify / Make Webhook endpoint: CONNECTED.<br>
+                    [DEV] TradingView Pine Script (PHOENIX_Signal_v4) integration completed.<br>
+                    [SECURITY] Multi-layered encryption protocol active for Game-Server nodes.
+                </p>
+                <p style="font-size: 1.05rem; margin-top: 20px;">
+                    私たちは単にトレンドを追うだけでなく、AIプロンプト生成、 note収益化のフレームワーク（共感→問題→解決→行動）、さらに利権に依存しない分散型のプラットフォーム運営を常にコードレベルで更新し続けます。
+                </p>
+                <button class="action-btn" style="background-color: var(--accent-cyan); color: #002c30;" onclick="alert('最新のAI自動生成プロンプト集および開発パッチノートを開きます。')">AI開発者パッチノート・プロンプト集を開く</button>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        <p>&copy; 2026 CACAO屋RECORD & AIM PHOENIX Global Platform. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        function switchTab(tabId) {
+            // すべてのパネルを一旦非表示にする
+            const panels = document.querySelectorAll('.section-panel');
+            panels.forEach(panel => {
+                panel.style.display = 'none';
+            });
+
+            // すべてのナビゲーションボタンからactiveクラスを外す
+            const buttons = document.querySelectorAll('.nav-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // 対象のパネルを表示し、押されたボタンをactiveにする
+            document.getElementById(tabId).style.display = 'block';
+            
+            // クリックされたボタンにactiveクラスを付与
+            const clickedBtn = Array.from(buttons).find(btn => btn.getAttribute('onclick').includes(tabId));
+            if(clickedBtn) clickedBtn.classList.add('active');
+
+            // 画面をタブの位置まで滑らかにスクロールさせる
+            window.scrollTo({
+                top: document.querySelector('.main-nav').offsetTop - 20,
+                behavior: 'smooth'
+            });
+        }
+    </script>
+</body>
+</html>

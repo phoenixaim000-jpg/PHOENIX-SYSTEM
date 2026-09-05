@@ -1,0 +1,8 @@
+[project]
+name = "gate-world-mvp"
+version = "0.1.0"
+description = "Possibility Gate / World AI / NPC AI simulation core"
+requires-python = ">=3.11"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

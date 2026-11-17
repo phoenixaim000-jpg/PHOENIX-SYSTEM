@@ -6,7 +6,7 @@ The GitHub connection used to inspect and write this repository is an authentica
 This is separate from authentication used by the EA at runtime.
 
 ## 2. MT5 authentication in the source
-The reviewed MT5 controller sample accepts three values: `login`, `server`, and `password`, then passes them to the MetaTrader5 Python package during terminal initialization. This is broker-account authentication, not OAuth or application-user authentication.
+The reviewed MT5 controller sample accepts `login`, `server`, and `password`. Its flow is two-stage: `mt5.initialize()` starts/attaches to the local terminal, then `mt5.login(self.login, password=self.password, server=self.server)` authenticates the trading account. This is broker-account authentication, not OAuth or application-user authentication.
 
 The source sample uses illustrative credentials in code. That pattern must not be used in production. The production design must:
 - Read credentials from environment variables or an OS secret store.

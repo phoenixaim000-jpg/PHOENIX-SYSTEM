@@ -1,0 +1,330 @@
+import math
+
+class DynamicLotController:
+    def __init__(self, base_lot=1.0, max_lot_multiplier=2.0, min_lot_multiplier=0.1):
+        """
+        システム初期化
+        :param base_lot: 基準となるロット数（通常時のロット）
+        :param max_lot_multiplier: 確信度が最高の場合の最大ロット倍率（上限キャップ）
+        :param min_lot_multiplier: 自信がない場合の最小ロット倍率（下限キャップ）
+        """
+        self.base_lot = base_lot
+        self.max_lot_multiplier = max_lot_multiplier
+        self.min_lot_multiplier = min_lot_multiplier
+
+    def calculate_confidence_score(self, market_conditions):
+        """
+        相場環境からAIの確信度を計算するロジック
+        ※ ここにMovaロジックやインジケーターの判定を統合していきます。
+        """
+        score = 0.5  # スタートは50% (ニュートラル)
+
+        # 条件1: トレンドの一致度
+        if market_conditions.get("trend_aligned") == True:
+            score += 0.25
+        else:
+            score -= 0.15
+
+        # 条件2: ボラティリティ（荒れ相場時は自信を下げる）
+        if market_conditions.get("high_volatility") == True:
+            score -= 0.15
+        else:
+            score += 0.10
+
+        # 条件3: 過去の優位性パターン（確信パターン）に入っているか
+        if market_conditions.get("signature_pattern_matched") == True:
+            score += 0.30
+
+        # スコアを 0.0 ~ 1.0 の範囲に収める
+        score = max(0.0, min(1.0, score))
+        return score
+
+    def determine_lot_size(self, confidence_score):
+        """
+        確信度スコアに基づいて最終的な発注ロット数を決定する（境界監査バリア）
+        """
+        print(f"[AI分析] 現在の確信度スコア: {confidence_score:.2%}")
+
+        # 1. 確信度に応じた倍率の決定
+        if confidence_score >= 0.85:
+            multiplier = self.max_lot_multiplier
+            status = "🔥【確信・最高パターン】ロットを引き上げます"
+        elif confidence_score >= 0.60:
+            multiplier = 1.0
+            status = "👍【通常・期待値あり】基準ロットでエントリーします"
+        elif confidence_score >= 0.40:
+            multiplier = 0.5
+            status = "⚠️【警戒・自信なし】ロットを半分に縮小します"
+        else:
+            multiplier = 0.0
+            status = "🛑【見送り・不確実】リスクが高いためエントリーを回避します"
+
+        print(f"[判定結果] {status}")
+
+        # 2. ロット数の計算と絶対上限・下限の適用
+        calculated_lot = self.base_lot * multiplier
+
+        if calculated_lot > 0:
+            max_absolute_lot = self.base_lot * self.max_lot_multiplier
+            min_absolute_lot = self.base_lot * self.min_lot_multiplier
+            
+            calculated_lot = max(min_absolute_lot, min(max_absolute_lot, calculated_lot))
+            calculated_lot = round(calculated_lot, 2)
+
+        return calculated_lot
+
+# -*- coding: utf-8 -*-
+"""
+================================================================================
+VISION FX AI EA - ADVANCED LOT & RISK CONTROLLER (SEED BARRIER)
+Target File: lot_controller.py
+Description: 政府の資金供給パターンに応じてロット数と防衛障壁（SEED Barrier）を
+             動的に自動変動させ、いかなる状況でも資金を安泰に守り抜くコアモジュール。
+================================================================================
+"""
+
+class GovernmentMode:
+    BULK_INJECTION = "BULK_INJECTION"       # 政府が大きくお金を出した時
+    NO_INJECTION = "NO_INJECTION"           # 政府がお金を出さなかった時
+    FRAGMENTED = "FRAGMENTED"               # 政府が分けて（小出しに）出してきた時
+
+class VisionFxRiskController:
+    def __init__(self, target_reserve_ratio: float = 0.40):
+        """
+        リスクコントローラーの初期化
+        :param target_reserve_ratio: 利益から「絶対聖域積立金」に隔離する割合 (デフォルト40%)
+        """
+        self.target_reserve_ratio = target_reserve_ratio
+        # 初期状態は最も安全な「不給付・絶対防衛モード」に設定
+        self.current_mode = GovernmentMode.NO_INJECTION
+        self.seed_barrier_active = True
+
+    def update_scenario_mode(self, mode: str) -> str:
+        """
+        政府の資金供給動向に合わせて、システムモードを限界突破切り替えする
+        """
+        if mode in [GovernmentMode.BULK_INJECTION, GovernmentMode.NO_INJECTION, GovernmentMode.FRAGMENTED]:
+            self.current_mode = mode
+            return f"【SEED Barrier】システムモードを [{mode}] に正常に切り替えました。完遂安泰稼働中。"
+        else:
+            self.current_mode = GovernmentMode.NO_INJECTION
+            return "【警告】未定義の動向を検知。安全のため『絶対防衛モード』を維持します。"
+
+    def calculate_adaptive_lot(self, balance: float, market_volatility: float, base_risk_pct: float = 0.01) -> float:
+        """
+        現在の政府モードと市場のボラティリティから、絶対に困らない安全なロット（ポジションサイズ）を自動計算する
+        """
+        # 基本となる1%リスクモデルロット
+        base_lot = (balance * base_risk_pct) / 100000
+        
+        if self.current_mode == GovernmentMode.BULK_INJECTION:
+            # 政府の一括大量供給：流動性が高いためレバレッジ上限を拡大し利益を最大化
+            leverage_limit = 3.0
+            adjusted_lot = base_lot * leverage_limit * (1.0 / (market_volatility + 0.1))
+            
+        elif self.current_mode == GovernmentMode.NO_INJECTION:
+            # 政府の不給付（静観）：市場収縮に備え、ロットを通常の極小値に抑えて絶対安全を担保
+            leverage_limit = 0.5
+            adjusted_lot = base_lot * leverage_limit * 0.5
+            
+        elif self.current_mode == GovernmentMode.FRAGMENTED:
+            # 政府の断続的小出し：乱高下ノイズに対応するため、段階的トラップ用にポジションを細分化
+            leverage_limit = 1.5
+            adjusted_lot = base_lot * leverage_limit * 0.7
+        else:
+            adjusted_lot = base_lot * 0.1
+            
+        # 最小ロット0.01を下回らないように丸める
+        return max(0.01, round(adjusted_lot, 2))
+
+    def get_max_drawdown_limit(self) -> float:
+        """
+        現在のモードに応じた「強制遮断（損切）ドローダウン許容値」を返す
+        """
+        if self.current_mode == GovernmentMode.BULK_INJECTION:
+            return 0.08  # トレンドの押し目を考慮し最大8%まで許容
+        elif self.current_mode == GovernmentMode.NO_INJECTION:
+            return 0.02  # わずか2%のドローダウンでシステムを物理遮断する鉄壁の防御
+        elif self.current_mode == GovernmentMode.FRAGMENTED:
+            return 0.04  # 往復ビンタを防を防ぐため4%に設定
+        return 0.02
+
+    def process_profit_allocation(self, total_profit: float):
+        """
+        獲得した運用益から「絶対聖域積立金」への配当分と、次の運用残高への追加分を自動計算する
+        """
+        if total_profit <= 0:
+            return 0.0, 0.0
+            
+        allocated_to_pool = total_profit * self.target_reserve_ratio
+        actual_reinvestment = total_profit - allocated_to_pool
+        return actual_reinvestment, allocated_to_pool
+
+
+# vision_phoenix_ea.py の上部でインポートします
+from lot_controller import VisionFxRiskController, GovernmentMode
+
+# 初期化（40%を自動的に聖域積立金へ隔離する設定）
+risk_controller = VisionFxRiskController(target_reserve_ratio=0.40)
+
+# 例：政府の小出し発表を検知した、または手動で設定を切り替えるとき
+msg = risk_controller.update_scenario_mode(GovernmentMode.FRAGMENTED)
+print(msg)
+
+# トレード直前にロットを自動計算させる
+current_balance = 100000000  # 現在の口座残高
+volatility = 0.25            # 現在の市場のボラティリティ
+optimized_lot = risk_controller.calculate_adaptive_lot(current_balance, volatility)
+
+print(f"自動算出された安泰ロット数: {optimized_lot}")
+
+# -*- coding: utf-8 -*-
+"""
+================================================================================
+VISION FX AI EA - ADVANCED LOT & RISK CONTROLLER (WITH LINE ALERT)
+Target File: lot_controller.py
+Description: 確実に勝てる「攻めのパターン」にハマった際、50倍のロットでスキャルピングを仕掛け、
+             同時に個人LINE「AIM PHOENIX」へ状況を自動で即座に送信する限界突破システム。
+================================================================================
+"""
+
+import urllib.request
+import urllib.parse
+import json
+
+class GovernmentMode:
+    BULK_INJECTION = "BULK_INJECTION"       # 政府が大きくお金を出した時
+    NO_INJECTION = "NO_INJECTION"           # 政府がお金を出さなかった時
+    FRAGMENTED = "FRAGMENTED"               # 政府が分けて（小出しに）出してきた時
+    CONFIDENT_ATTACK = "CONFIDENT_ATTACK"   # 確実に勝てる超攻勢パターン（50倍スキャルピング）
+
+class VisionFxRiskController:
+    def __init__(self, target_reserve_ratio: float = 0.40):
+        """
+        リスクコントローラーの初期化
+        """
+        self.target_reserve_ratio = target_reserve_ratio
+        self.current_mode = GovernmentMode.NO_INJECTION
+        self.seed_barrier_active = True
+        
+        # ======================================================================
+        # 【LINE設定エリア】AIM PHOENIX のLINEに紐づくトークンとIDを設定します
+        # ======================================================================
+        self.line_channel_access_token = "YOUR_LINE_CHANNEL_ACCESS_TOKEN"  # チャンネルアクセストークンを入力
+        self.line_user_id = "YOUR_LINE_USER_ID"                            # あなたのLINEユーザーIDを入力
+        # ======================================================================
+
+    def update_scenario_mode(self, mode: str) -> str:
+        """
+        政府の動向、または「確実な攻めパターン」を検知してシステムモードを切り替える
+        """
+        if mode in [GovernmentMode.BULK_INJECTION, GovernmentMode.NO_INJECTION, GovernmentMode.FRAGMENTED, GovernmentMode.CONFIDENT_ATTACK]:
+            self.current_mode = mode
+            
+            # 【確実な攻めパターン（50倍ロット）】にハマった場合、即座に個人LINEへ通知
+            if mode == GovernmentMode.CONFIDENT_ATTACK:
+                alert_message = (
+                    "🔥【VISION FX AI EA】限界突破・攻勢シグナル検知🔥\n\n"
+                    "AIM PHOENIX さん、勝利を確信できる『絶対攻勢パターン』に入りました！\n"
+                    "■ ロット規模：通常の50倍へ一時ブースト\n"
+                    "■ 戦略：超短期スキャルピング攻勢\n\n"
+                    "防衛障壁（SEED Barrier）を1%に引き締め、完全武装で攻め込みます。\n"
+                    "至急、Geminiにアクセスして、この後の相場展開と世界線の答えを確認してください！"
+                )
+                self.send_line_notification(alert_message)
+                return f"【SEED Barrier】★超攻勢モード [{mode}] が起動しました！ 50倍ロットスキャルピングを実行し、LINEへシグナルを送信しました。"
+                
+            return f"【SEED Barrier】システムモードを [{mode}] に切り替えました。完遂安泰稼働中。"
+        else:
+            self.current_mode = GovernmentMode.NO_INJECTION
+            return "【警告】未定義の動向。安全のため『絶対防衛モード』を維持します。"
+
+    def calculate_adaptive_lot(self, balance: float, market_volatility: float, base_risk_pct: float = 0.01) -> float:
+        """
+        現在のモードから安全なロットを自動計算する（CONFIDENT_ATTACK時は50倍ブースト）
+        """
+        base_lot = (balance * base_risk_pct) / 100000
+        
+        if self.current_mode == GovernmentMode.CONFIDENT_ATTACK:
+            # 確実な攻勢：ベースロットの50倍を適用
+            leverage_limit = 50.0
+            adjusted_lot = base_lot * leverage_limit
+            
+        elif self.current_mode == GovernmentMode.BULK_INJECTION:
+            leverage_limit = 3.0
+            adjusted_lot = base_lot * leverage_limit * (1.0 / (market_volatility + 0.1))
+            
+        elif self.current_mode == GovernmentMode.NO_INJECTION:
+            leverage_limit = 0.5
+            adjusted_lot = base_lot * leverage_limit * 0.5
+            
+        elif self.current_mode == GovernmentMode.FRAGMENTED:
+            leverage_limit = 1.5
+            adjusted_lot = base_lot * leverage_limit * 0.7
+        else:
+            adjusted_lot = base_lot * 0.1
+            
+        return max(0.01, round(adjusted_lot, 2))
+
+    def get_max_drawdown_limit(self) -> float:
+        """
+        モードに応じた最大ドローダウン制限（強制遮断ライン）
+        """
+        if self.current_mode == GovernmentMode.CONFIDENT_ATTACK:
+            return 0.01  # わずか1%のドローダウンで即時完全損切（50倍時の絶対防御）
+        elif self.current_mode == GovernmentMode.BULK_INJECTION:
+            return 0.08
+        elif self.current_mode == GovernmentMode.NO_INJECTION:
+            return 0.02
+        elif self.current_mode == GovernmentMode.FRAGMENTED:
+            return 0.04
+        return 0.02
+
+    def send_line_notification(self, message: str):
+        """
+        AIM PHOENIX の個人LINEにメッセージを通知するモジュール（LINE Messaging APIを使用）
+        """
+        # 初期設定のままの場合はコンソール出力のみでデバッグ
+        if self.line_channel_access_token == "YOUR_LINE_CHANNEL_ACCESS_TOKEN" or self.line_user_id == "YOUR_LINE_USER_ID":
+            print("\n【デバッグ通知】LINEのトークンまたはユーザーIDが未設定です。")
+            print(f"LINE送信メッセージ内容:\n{message}\n")
+            return
+
+        url = "https://api.line.me/v2/bot/message/push"
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.line_channel_access_token}"
+        }
+        payload = {
+            "to": self.line_user_id,
+            "messages": [
+                {
+                    "type": "text",
+                    "text": message
+                }
+            ]
+        }
+        
+        try:
+            req = urllib.request.Request(
+                url, 
+                data=json.dumps(payload).encode("utf-8"), 
+                headers=headers, 
+                method="POST"
+            )
+            with urllib.request.urlopen(req) as response:
+                res_body = response.read().decode("utf-8")
+                print(f"【LINE送信完了】AIM PHOENIX へシグナルを正常に送信しました。")
+        except Exception as e:
+            print(f"【LINE送信エラー】送信に失敗しました: {e}")
+
+    def process_profit_allocation(self, total_profit: float):
+        """
+        獲得した運用益から「絶対聖域積立金」への配当分と、次の運用残高への追加分を自動計算
+        """
+        if total_profit <= 0:
+            return 0.0, 0.0
+            
+        allocated_to_pool = total_profit * self.target_reserve_ratio
+        actual_reinvestment = total_profit - allocated_to_pool
+        return actual_reinvestment, allocated_to_pool

@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "system": "PHOENIX-SYSTEM",
+  "source": "VISION-FX-EA-GEMINI",
+  "mode": "SIGNAL_ONLY",
+  "allow_demo_orders": false,
+  "allow_live_orders": false,
+  "groups": {
+    "crypto": {
+      "status": "partial_source_coverage",
+      "in_source_examples": ["BTCUSD"],
+      "additional_assets": ["ETH", "SOL", "XRP", "ADA", "other broker-listed crypto"],
+      "broker_symbol_mapping_required": true,
+      "enabled": false
+    },
+    "forex": {
+      "status": "partial_source_coverage",
+      "in_source_examples": ["EURUSD (commented example only)"],
+      "additional_assets": ["USDJPY", "GBPUSD", "AUDUSD", "USDCAD", "USDCHF", "NZDUSD", "crosses"],
+      "broker_symbol_mapping_required": true,
+      "enabled": false
+    },
+    "metals": {
+      "status": "partial_source_coverage",
+      "in_source_examples": ["XAUUSD"],
+      "additional_assets": ["XAGUSD", "other broker-listed metals"],
+      "broker_symbol_mapping_required": true,
+      "enabled": false
+    },
+    "energy": {
+      "status": "not_implemented_in_reviewed_source",
+      "additional_assets": ["WTI crude", "Brent crude", "gasoline/RBOB", "natural gas"],
+      "broker_symbol_mapping_required": true,
+      "enabled": false
+    }
+  },
+  "required_instrument_metadata": [
+    "broker_symbol",
+    "asset_class",
+    "contract_size",
+    "digits",
+    "point",
+    "tick_size",
+    "tick_value",
+    "volume_min",
+    "volume_max",
+    "volume_step",
+    "margin_requirements",
+    "trading_sessions",
+    "commission_and_swap",
+    "data_source_and_timestamp"
+  ],
+  "risk_controls": {
+    "max_account_risk_per_trade_pct": 0.25,
+    "max_daily_drawdown_pct": 1.0,
+    "max_open_positions_per_symbol": 1,
+    "max_total_open_positions": 2,
+    "max_consecutive_losses": 2,
+    "disable_averaging_down": true,
+    "require_stop_loss": true,
+    "halt_on_missing_or_stale_data": true
+  },
+  "notes": [
+    "All asset groups are disabled pending broker symbol and contract verification.",
+    "Instrument names are examples, not guaranteed broker symbols.",
+    "Risk values are conservative initial test limits, not a promise of loss prevention.",
+    "No order execution is enabled by this configuration."
+  ]
+}
